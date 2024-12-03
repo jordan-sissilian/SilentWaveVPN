@@ -1,0 +1,177 @@
+openapi: 3.0.0
+info:
+  title: VPN Server API
+  description: API for controlling and managing the VPN server (WireGuard)
+  version: 1.0.0
+paths:
+  /server_public_key:
+    get:
+      summary: Retrieve the server's public key
+      responses:
+        200:
+          description: Successful retrieval of the public key
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: Server public key and IP retrieved.
+                  public_key:
+                    type: string
+                    example: "public_key"
+                  public_ip:
+                    type: string
+                    example: "ip_server"
+        500:
+          description: Error retrieving the public key or public IP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: Unable to retrieve the server public key.
+  /add_user:
+    post:
+      summary: Add a user to the VPN
+      parameters:
+        - in: query
+          name: public_key
+          required: true
+          schema:
+            type: string
+          description: The public key of the user to add
+      responses:
+        200:
+          description: User successfully added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: "10.0.0.2/32"
+        500:
+          description: Error finding an available IP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: No available IP
+  /remove_user:
+    post:
+      summary: Remove a user from the VPN
+      parameters:
+        - in: query
+          name: public_key
+          required: true
+          schema:
+            type: string
+          description: The public key of the user to remove
+      responses:
+        200:
+          description: User successfully removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: "User successfully removed."
+        500:
+          description: Error removing the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: "Error removing the user."
+  /count_users:
+    get:
+      summary: Get the count of connected users
+      responses:
+        200:
+          description: Number of connected users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  user_count:
+                    type: integer
+                    example: 10
+        500:
+          description: Error counting the users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: Unable to count users.
+  /status:
+    get:
+      summary: Get the status of the VPN
+      responses:
+        200:
+          description: The status of the VPN (started or stopped)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: The VPN is started.
+  /ping:
+    get:
+      summary: Simple ping to check API connectivity
+      responses:
+        200:
+          description: API is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
