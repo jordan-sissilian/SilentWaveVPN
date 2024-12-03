@@ -1,15 +1,20 @@
 openapi: 3.0.0
 info:
   title: VPN Server API
-  description: API for controlling and managing the VPN server (WireGuard)
+  description: API pour la gestion des utilisateurs et la configuration d'un serveur VPN.
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Serveur local de développement
+
 paths:
-  /server_public_key:
+  /server:
     get:
-      summary: Retrieve the server's public key
+      summary: Obtenir la clé publique et l'IP publique du serveur
+      operationId: getServerInfo
       responses:
-        200:
-          description: Successful retrieval of the public key
+        '200':
+          description: Clé publique et IP récupérées avec succès
           content:
             application/json:
               schema:
@@ -23,12 +28,12 @@ paths:
                     example: Server public key and IP retrieved.
                   public_key:
                     type: string
-                    example: "public_key"
+                    example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."
                   public_ip:
                     type: string
-                    example: "ip_server"
-        500:
-          description: Error retrieving the public key or public IP
+                    example: "192.168.1.1"
+        '500':
+          description: Erreur lors de la récupération de la clé publique ou de l'IP
           content:
             application/json:
               schema:
@@ -40,19 +45,24 @@ paths:
                   msg:
                     type: string
                     example: Unable to retrieve the server public key.
-  /add_user:
+
+  /users:
     post:
-      summary: Add a user to the VPN
-      parameters:
-        - in: query
-          name: public_key
-          required: true
-          schema:
-            type: string
-          description: The public key of the user to add
+      summary: Ajouter un utilisateur avec sa clé publique
+      operationId: addUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                public_key:
+                  type: string
+                  description: Clé publique de l'utilisateur
+                  example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQE..."
       responses:
-        200:
-          description: User successfully added
+        '200':
+          description: Utilisateur ajouté avec succès
           content:
             application/json:
               schema:
@@ -63,9 +73,9 @@ paths:
                     example: success
                   msg:
                     type: string
-                    example: "10.0.0.2/32"
-        500:
-          description: Error finding an available IP
+                    example: 192.168.0.100/32
+        '500':
+          description: Erreur lors de l'ajout de l'utilisateur
           content:
             application/json:
               schema:
@@ -77,19 +87,22 @@ paths:
                   msg:
                     type: string
                     example: No available IP
-  /remove_user:
-    post:
-      summary: Remove a user from the VPN
+
+  /user/{public_key}:
+    delete:
+      summary: Supprimer un utilisateur en utilisant sa clé publique
+      operationId: removeUser
       parameters:
-        - in: query
-          name: public_key
+        - name: public_key
+          in: path
           required: true
+          description: Clé publique de l'utilisateur à supprimer
           schema:
             type: string
-          description: The public key of the user to remove
+            example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQE..."
       responses:
-        200:
-          description: User successfully removed
+        '200':
+          description: Utilisateur supprimé avec succès
           content:
             application/json:
               schema:
@@ -100,9 +113,9 @@ paths:
                     example: success
                   msg:
                     type: string
-                    example: "User successfully removed."
-        500:
-          description: Error removing the user
+                    example: User successfully removed.
+        '500':
+          description: Erreur lors de la suppression de l'utilisateur
           content:
             application/json:
               schema:
@@ -113,13 +126,15 @@ paths:
                     example: error
                   msg:
                     type: string
-                    example: "Error removing the user."
+                    example: Unable to remove user.
+
   /count_users:
     get:
-      summary: Get the count of connected users
+      summary: Compter le nombre d'utilisateurs connectés
+      operationId: countUsers
       responses:
-        200:
-          description: Number of connected users
+        '200':
+          description: Nombre d'utilisateurs récupéré avec succès
           content:
             application/json:
               schema:
@@ -128,11 +143,14 @@ paths:
                   status:
                     type: string
                     example: success
+                  msg:
+                    type: string
+                    example: Number of users connected.
                   user_count:
                     type: integer
                     example: 10
-        500:
-          description: Error counting the users
+        '500':
+          description: Erreur lors du comptage des utilisateurs
           content:
             application/json:
               schema:
@@ -144,12 +162,14 @@ paths:
                   msg:
                     type: string
                     example: Unable to count users.
+
   /status:
     get:
-      summary: Get the status of the VPN
+      summary: Vérifier l'état du VPN
+      operationId: checkVpnStatus
       responses:
-        200:
-          description: The status of the VPN (started or stopped)
+        '200':
+          description: État du VPN récupéré avec succès
           content:
             application/json:
               schema:
@@ -161,12 +181,27 @@ paths:
                   msg:
                     type: string
                     example: The VPN is started.
+        '500':
+          description: Erreur lors de la récupération de l'état du VPN
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: The VPN is stopped.
+
   /ping:
     get:
-      summary: Simple ping to check API connectivity
+      summary: Vérifier la disponibilité de l'API
+      operationId: ping
       responses:
-        200:
-          description: API is alive
+        '200':
+          description: API disponible
           content:
             application/json:
               schema:
