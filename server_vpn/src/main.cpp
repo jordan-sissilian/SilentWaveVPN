@@ -145,7 +145,7 @@ int main() {
         res.set_content(response.dump(), "application/json");
     });
 
-    svr.Post("/add_user", [](const Request &req, Response &res) {
+    svr.Post("/users", [](const Request &req, Response &res) {
         auto public_key = req.get_param_value("public_key");
         std::string ip = find_available_ip() + "/32";
 
@@ -163,8 +163,8 @@ int main() {
         res.set_content(response.dump(), "application/json");
     });
 
-    svr.Post("/remove_user", [](const Request &req, Response &res) {
-        auto public_key = req.get_param_value("public_key");
+    svr.Delete(R"(/user/(\w+))", [](const Request &req, Response &res) {
+        auto public_key = req.matches[1];
 
         json response;
         remove_user(public_key);
