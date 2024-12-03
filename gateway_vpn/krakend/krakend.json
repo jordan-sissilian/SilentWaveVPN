@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "endpoints": [
+        {
+        "endpoint": "/info",
+        "method": "GET",
+        "backend": [
+          {
+            "host": ["http://localhost:8080"],
+            "url_pattern": "/info/check"
+          }
+        ],
+        "extra_config": {
+                "proxy": {
+                    "static": {
+                        "data": {
+                            "vpn_name": {
+                                "1" : "first",
+                                "2" : "two"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    ]
+}
