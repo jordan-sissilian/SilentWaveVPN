@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <set>
+
 #include "httplib.h"
 #include "nlohmann/json.hpp"
 
@@ -36,9 +37,16 @@ void stop_vpn() {
     std::cout << "WireGuard stopped." << std::endl;
 }
 
+void signal_handler(int signal) {
+    std::cout << "\nSignal received: " << signal << ". Stopping VPN..." << std::endl;
+    stop_vpn();
+    exit(0);
+}
+
 std::string get_server_public_key() {
     std::string result = exec_command("wg show wg0");
     size_t pos = result.find("public key:");
+
     if (pos != std::string::npos) {
         result = result.substr(pos + 12);
         size_t end_pos = result.find("\n");
@@ -46,6 +54,7 @@ std::string get_server_public_key() {
             return result.substr(0, end_pos);
         }
     }
+
     return "Unable to find public key.";
 }
 
@@ -62,8 +71,7 @@ std::string find_available_ip() {
     while (std::getline(stream, line)) {
         std::istringstream line_stream(line);
         std::string field;
-        int column = 0;
-        while (std::getline(line_stream, field, '\t')) {
+        for (int column = 0; std::getline(line_stream, field, '\t'); column++) {
             if (column == 3) {
                 size_t pos = field.find('/');
                 if (pos != std::string::npos) {
@@ -71,7 +79,6 @@ std::string find_available_ip() {
                 }
                 break;
             }
-            column++;
         }
     }
 
@@ -87,16 +94,19 @@ std::string find_available_ip() {
 
 void add_user(const std::string &public_key, const std::string &ip) {
     std::string command = "wg set wg0 peer " + public_key + " allowed-ips " + ip;
+
     exec_command(command);
 }
 
 void remove_user(const std::string &public_key) {
     std::string command = "wg set wg0 peer " + public_key + " remove";
+
     exec_command(command);
 }
 
 std::string get_vpn_status() {
     std::string result = exec_command("wg show wg0");
+
     if (result.find("interface: wg0") != std::string::npos) {
         return ("started");
     }
@@ -106,12 +116,6 @@ std::string get_vpn_status() {
 std::string get_public_ip() {
     std::string command = "curl http://ifconfig.me";
     return exec_command(command);
-}
-
-void signal_handler(int signal) {
-    std::cout << "\nSignal received: " << signal << ". Stopping VPN..." << std::endl;
-    stop_vpn();
-    exit(0);
 }
 
 int main() {
@@ -146,8 +150,9 @@ int main() {
     });
 
     svr.Post("/users", [](const Request &req, Response &res) {
-        auto public_key = req.get_param_value("public_key");
-        std::string ip = find_available_ip() + "/32";
+        json body = json::parse(req.body);
+        auto public_key = body["public_key"].get<std::string>();
+        std::string ip = find_available_ip();
 
         json response;
         if (ip == "No available IP") {
@@ -157,16 +162,22 @@ int main() {
         } else {
             add_user(public_key, ip);
             response["status"] = "success";
-            response["msg"] = ip;
+            response["msg"] = ip +  "/32";
         }
 
         res.set_content(response.dump(), "application/json");
     });
 
-    svr.Delete(R"(/user/(\w+))", [](const Request &req, Response &res) {
-        auto public_key = req.matches[1];
+    svr.Delete(R"(/user/([^/]+))", [](const Request &req, Response &res) {
+        if (req.matches.size() < 2) {
+            res.set_content(R"({"status": "error", "msg": "No public key provided."})", "application/json");
+            res.status = 400;
+            return;
+        }
 
+        auto public_key = req.matches[1];
         json response;
+
         remove_user(public_key);
         response["status"] = "success";
         response["msg"] = "User successfully removed.";
@@ -221,5 +232,6 @@ int main() {
     });
 
     svr.listen("0.0.0.0", 8080);
+
     return (0);
 }
