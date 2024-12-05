@@ -1,0 +1,24 @@
+[
+    {
+        "endpoint": "/info",
+        "method": "GET",
+        "backend": [
+            {
+                "host": [
+                    "http://localhost:8080"
+                ],
+                "url_pattern": "/info/check"
+            }
+        ],
+        "extra_config": {
+            "id": "config_vpn",
+            "proxy": {
+                "static": {
+                    "data": {
+                        "vpn_info": {}
+                    }
+                }
+            }
+        }
+    }
+]

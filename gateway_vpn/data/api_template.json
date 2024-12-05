@@ -1,0 +1,81 @@
+[
+    {
+        "endpoint": "/server",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/server",
+                "method": "GET",
+                "host": []
+            }
+        ]
+    },
+    {
+        "endpoint": "/users",
+        "method": "POST",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/users",
+                "method": "POST",
+                "host": []
+            }
+        ]
+    },
+    {
+        "endpoint": "/user/{public_key}",
+        "method": "DELETE",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/user/{public_key}",
+                "method": "DELETE",
+                "host": [],
+                "extra_config": {
+                    "router": {
+                        "headers_to_pass": [
+                            "public_key"
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "endpoint": "/count_users",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/count_users",
+                "method": "GET",
+                "host": []
+            }
+        ]
+    },
+    {
+        "endpoint": "/status",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/status",
+                "method": "GET",
+                "host": []
+            }
+        ]
+    },
+    {
+        "endpoint": "/ping",
+        "method": "GET",
+        "output_encoding": "json",
+        "backend": [
+            {
+                "url_pattern": "/ping",
+                "method": "GET",
+                "host": []
+            }
+        ]
+    }
+]
