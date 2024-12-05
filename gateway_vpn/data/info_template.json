@@ -15,7 +15,7 @@
             "proxy": {
                 "static": {
                     "data": {
-                        "vpn_info": {}
+                        "vpn": {}
                     }
                 }
             }

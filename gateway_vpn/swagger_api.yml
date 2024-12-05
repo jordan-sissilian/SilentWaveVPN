@@ -1,0 +1,259 @@
+openapi: 3.0.0
+info:
+  title: Gateway VPN API
+  description: API Gateway pour la gestion des utilisateurs et la configuration centralisée d'un serveur VPN.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/
+    description: Serveur local de développement
+
+paths:
+  /{id_host}/server:
+    get:
+      summary: Obtenir la clé publique et l'IP publique du serveur
+      operationId: getServerInfo
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: Clé publique et IP récupérées avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: Server public key and IP retrieved.
+                  public_key:
+                    type: string
+                    example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA..."
+                  public_ip:
+                    type: string
+                    example: "192.168.1.1"
+        '500':
+          description: Erreur lors de la récupération de la clé publique ou de l'IP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: Unable to retrieve the server public key.
+
+  /{id_host}/users:
+    post:
+      summary: Ajouter un utilisateur avec sa clé publique
+      operationId: addUser
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                public_key:
+                  type: string
+                  description: Clé publique de l'utilisateur
+                  example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQE..."
+      responses:
+        '200':
+          description: Utilisateur ajouté avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: 192.168.0.100/32
+        '500':
+          description: Erreur lors de l'ajout de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: No available IP
+
+  /{id_host}/user/{public_key}:
+    delete:
+      summary: Supprimer un utilisateur en utilisant sa clé publique
+      operationId: removeUser
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+        - name: public_key
+          in: path
+          required: true
+          description: Clé publique de l'utilisateur à supprimer
+          schema:
+            type: string
+            example: "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQE..."
+      responses:
+        '200':
+          description: Utilisateur supprimé avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: User successfully removed.
+        '500':
+          description: Erreur lors de la suppression de l'utilisateur
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: Unable to remove user.
+
+  /{id_host}/count_users:
+    get:
+      summary: Compter le nombre d'utilisateurs connectés
+      operationId: countUsers
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: Nombre d'utilisateurs récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: Number of users connected.
+                  user_count:
+                    type: integer
+                    example: 10
+        '500':
+          description: Erreur lors du comptage des utilisateurs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: Unable to count users.
+
+  /{id_host}/status:
+    get:
+      summary: Vérifier l'état du VPN
+      operationId: checkVpnStatus
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: État du VPN récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  msg:
+                    type: string
+                    example: The VPN is started.
+        '500':
+          description: Erreur lors de la récupération de l'état du VPN
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  msg:
+                    type: string
+                    example: The VPN is stopped.
+
+  /{id_host}/ping:
+    get:
+      summary: Vérifier la disponibilité de l'API
+      operationId: ping
+      parameters:
+        - name: id_host
+          in: path
+          required: true
+          description: Identifiant de l'hôte du serveur VPN
+          schema:
+            type: integer
+            example: 0
+      responses:
+        '200':
+          description: API disponible
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
