@@ -21,7 +21,9 @@ RUN apk add --no-cache \
     curl \
     bash \
     libstdc++ \
-    libgcc
+    libgcc \
+    openrc \
+    iptables
 
 RUN mkdir -p /etc/wireguard /app
 
