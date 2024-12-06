@@ -12,12 +12,12 @@
         ]
     },
     {
-        "endpoint": "/users",
+        "endpoint": "/user",
         "method": "POST",
         "output_encoding": "json",
         "backend": [
             {
-                "url_pattern": "/users",
+                "url_pattern": "/user",
                 "method": "POST",
                 "host": []
             }

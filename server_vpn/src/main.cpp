@@ -149,7 +149,7 @@ int main() {
         res.set_content(response.dump(), "application/json");
     });
 
-    svr.Post("/users", [](const Request &req, Response &res) {
+    svr.Post("/user", [](const Request &req, Response &res) {
         json body = json::parse(req.body);
         auto public_key = body["public_key"].get<std::string>();
         std::string ip = find_available_ip();
