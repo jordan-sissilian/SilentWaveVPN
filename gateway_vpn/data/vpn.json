@@ -1,7 +1,12 @@
 [
   {
-    "name": "vpn 1",
+    "name": "Vpn 1",
     "host": "5.250.188.145:8080",
-    "localisation": "France"
+    "localisation": "Spain"
+  },
+  {
+    "name": "Vpn 2",
+    "host": "198.71.51.64:8080",
+    "localisation": "United States"
   }
 ]
