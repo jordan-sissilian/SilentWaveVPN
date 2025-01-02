@@ -1,8 +1,4 @@
-// WireGuardConfig.cpp
 #include "WireGuardConfig.hpp"
-#include <cstdlib>
-#include <cstdio>
-
 
 WireGuardConfig::WireGuardConfig() {
     generateKeys();

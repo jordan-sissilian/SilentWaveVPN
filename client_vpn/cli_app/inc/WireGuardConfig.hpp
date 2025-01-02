@@ -1,6 +1,4 @@
-// WireGuardConfig.hpp
-#ifndef WIREGUARD_CONFIG_HPP
-#define WIREGUARD_CONFIG_HPP
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -8,6 +6,8 @@
 #include <stdexcept>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <cstdlib>
+#include <cstdio>
 
 #define CONFIG_FILE_VPN "/Users/Shared/wireguard/vpn.conf"
 
@@ -34,11 +34,11 @@ public:
     void startWireGuard();
     void stopWireGuard();
 
+    WireGuardConfigData getData() const { return configData_; }
+
 private:
     WireGuardConfigData configData_;
 
     void generateKeys();
     static std::string executeCommand(const std::string& command);
 };
-
-#endif // WIREGUARD_CONFIG_HPP

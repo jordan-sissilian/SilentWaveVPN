@@ -1,5 +1,4 @@
-#ifndef VPN_CLIENT_HPP
-#define VPN_CLIENT_HPP
+#pragma once
 
 #include <string>
 #include <map>
@@ -25,5 +24,3 @@ private:
     std::string constructPath(const std::string& endpoint, const std::map<std::string, std::string>& params);
     nlohmann::json handleResponse(const httplib::Result& res);
 };
-
-#endif // VPN_CLIENT_HPP
