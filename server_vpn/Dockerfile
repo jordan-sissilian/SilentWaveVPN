@@ -11,7 +11,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN g++ -std=c++17 -I./inc/cpp-httplib -I./inc/json/include -o wg_api src/main.cpp
+RUN g++ -std=c++17 -I./lib/cpp-httplib -I./lib/json/include -o wg_api src/main.cpp
 
 FROM alpine:latest
 
