@@ -3,7 +3,7 @@
 # Ce script permet de mettre à jour un fichier de configuration KrakenD (`krakend.json`) en y ajoutant des entrées spécifiques extraites d'un fichier de données (`vpn.json`).
 #
 # Le script exécute les actions suivantes :
-# 1. Parcours des entrées dans le fichier de données (`vpn.json`) et validation de la présence de champs essentiels (name, host, localisation).
+# 1. Parcours des entrées dans le fichier de données (`vpn.json`) et validation de la présence de champs essentiels (name, host, location, max-user).
 # 2. Création de nouvelles entrées JSON avec les données extraites du fichier de données.
 # 3. Mise à jour du fichier `krakend.json` en ajoutant chaque nouvelle entrée au bon endroit dans la structure existante sous `proxy.static.data.vpn`.
 #
@@ -54,21 +54,22 @@ echo -e "${BLUE}[$(get_current_time)] Début de la mise à jour du fichier ${NC}
 jq -c '.[]' "$DATA_FILE" | while IFS= read -r line; do
   name=$(echo "$line" | jq -r '.name')
   host=$(echo "$line" | jq -r '.host')
-  localisation=$(echo "$line" | jq -r '.localisation')
+  location=$(echo "$line" | jq -r '.location')
+  maxUser=$(echo "$line" | jq -r '.max-user')
 
   # Vérification de la complétude de l'entrée
-  if [[ -z "$name" || -z "$host" || -z "$localisation" ]]; then
-    echo -e "${RED}[$(get_current_time)] Erreur : Une entrée est incomplète (name: '$name', host: '$host', localisation: '$localisation'). Ignorée.${NC}"
+  if [[ -z "$name" || -z "$host" || -z "$location" || -z "$maxUser" ]]; then
+    echo -e "${RED}[$(get_current_time)] Erreur : Une entrée est incomplète (name: '$name', host: '$host', location: '$location', max-user: '$maxUser'). Ignorée.${NC}"
     continue
   fi
 
   # Création d'une nouvelle entrée JSON avec les données récupérées
-  new_entry=$(jq -n --arg name "$name" --arg host "$host" --arg localisation "$localisation" \
-    '{name: $name, host: $host, localisation: $localisation}')
+  new_entry=$(jq -n --arg name "$name" --arg host "$host" --arg location "$location" --arg max-user "$maxUser" \
+    '{name: $name, host: $host, location: $location, max-user: $maxUser}')
 
   # Vérification de la création de l'entrée JSON
   if [[ -z "$new_entry" ]]; then
-    echo -e "${RED}[$(get_current_time)] Erreur : Impossible de créer une entrée JSON valide pour name='$name', host='$host', localisation='$localisation'. Ignorée.${NC}"
+    echo -e "${RED}[$(get_current_time)] Erreur : Impossible de créer une entrée JSON valide pour name='$name', host='$host', location='$location', max-user='$maxUser'. Ignorée.${NC}"
     continue
   fi
 
@@ -95,7 +96,7 @@ jq -c '.[]' "$DATA_FILE" | while IFS= read -r line; do
     exit 1
   }
 
-  echo -e "${GREEN}[$(get_current_time)] \tDonnée ajoutée : '$name', '$host', '$localisation'.${NC}"
+  echo -e "${GREEN}[$(get_current_time)] \tDonnée ajoutée : '$name', '$host', '$location', '$maxUser'.${NC}"
   id_counter=$((id_counter + 1))
 
 done

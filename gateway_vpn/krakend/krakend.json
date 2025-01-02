@@ -1,5 +1,11 @@
 {
   "version": 3,
   "name": "API Vpn Gateway",
+  "debug": true,
+  "logging": {
+    "level": "debug",
+    "format": "json",
+    "output": "stdout"
+  },
   "endpoints": []
 }

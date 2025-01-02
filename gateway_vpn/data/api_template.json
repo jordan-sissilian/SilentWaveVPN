@@ -24,21 +24,14 @@
         ]
     },
     {
-        "endpoint": "/user/{public_key}",
-        "method": "DELETE",
+        "endpoint": "/user_delete",
+        "method": "POST",
         "output_encoding": "json",
         "backend": [
             {
-                "url_pattern": "/user/{public_key}",
-                "method": "DELETE",
-                "host": [],
-                "extra_config": {
-                    "router": {
-                        "headers_to_pass": [
-                            "public_key"
-                        ]
-                    }
-                }
+                "url_pattern": "/user_delete",
+                "method": "POST",
+                "host": []
             }
         ]
     },

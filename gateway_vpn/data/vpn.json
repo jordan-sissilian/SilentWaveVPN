@@ -2,11 +2,13 @@
   {
     "name": "Vpn 1",
     "host": "5.250.188.145:8080",
-    "localisation": "Spain"
+    "localisation": "Spain",
+    "max-user": "5"
   },
   {
     "name": "Vpn 2",
     "host": "198.71.51.64:8080",
-    "localisation": "United States"
+    "localisation": "United States",
+    "max-user": "5"
   }
 ]
