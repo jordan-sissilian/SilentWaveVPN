@@ -2,3 +2,4 @@
 .idea
 .vscode/settings.json
 /client_vpn/cli_app/build
+website_vpn/package-lock.json

@@ -62,7 +62,8 @@ nlohmann::json VpnManager::selectServer() {
         };
         wgConfig.updateConfigFile(configData);
     }
-    return (serversInfo["vpn"][std::to_string(indexServer + 1)]);
+    hostConnected = serversInfo["vpn"][std::to_string(indexServer + 1)];
+    return (hostConnected);
 }
 
 void VpnManager::startVpn() {
@@ -72,4 +73,5 @@ void VpnManager::startVpn() {
 
 void VpnManager::stopVpn() {
     wgConfig.stopWireGuard();
+    client.removeUser(std::stoi(hostConnected), wgConfig.getPublicKey());
 }

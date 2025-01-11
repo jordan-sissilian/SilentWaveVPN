@@ -14,7 +14,7 @@ using namespace httplib;
 
 // Todo: optimize
 // Todo: user_delete (DELETE, actual POST)
-// remplace exec_command (shell) with cpp code
+// remplace exec_command (shell) with cpp code: optional
 std::string exec_command(const std::string &command) {
     char buffer[128];
     std::string result;

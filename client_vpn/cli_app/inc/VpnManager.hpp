@@ -18,4 +18,6 @@ private:
     VpnClient client;
     WireGuardConfig wgConfig;
     nlohmann::json serversInfo;
+
+    std::string hostConnected;
 };
